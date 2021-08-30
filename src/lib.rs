@@ -1,3 +1,5 @@
+//! `Booleanomials` - Turn boolean operations into polynomials
+
 use inner::{BoolyOrder, GoodBooly};
 
 mod inner {
@@ -11,11 +13,15 @@ mod inner {
         };
     }
 
-    /// This trait is used with `BoolyOrder` to determine how many variables a `Booleanomial` has.
+    /// This trait is used with `BoolyOrder` to determine how many variables that a `Booleanomial`
+    /// has.
     pub trait GoodBooly {
+        /// The amount of variables that a `Booleanomial` has.
         const VALUE: usize;
     }
 
+    /// Struct that implements `GoodBooly` when `N` is a power of 2, and defines `GoodBooly::VALUE`
+    /// to be `log2(N)`.
     pub struct BoolyOrder<const N: usize> {}
 
     impl_booly_order!(
@@ -34,20 +40,21 @@ mod inner {
 /// A Booleanomial of `N` terms.
 ///
 /// Has `N` terms, and `log2(N)` variables. For example, a `Booleanomial<4>` has four terms and two
-/// variables, so it can represent a XOR b, or -2ab + a + b.
+/// variables, so it can represent `a XOR b`, which is `-2ab + a + b`.
 ///
 /// A Booleanomial of `X` variables only needs `2^X` terms because powers of variables, such as
-/// ab^2, simplify to ab due to the fact that b^2=b is true for all values of b (b=0 and b=1).
-/// Therefore, every term can either have each variable only once or not at all.
+/// `ab^2`, simplify to `ab` due to the fact that `b^2=b` is true for all values of `b` (`b=0` and
+/// `b=1`). Therefore, every term either has a variable or does not, which limits the number of
+/// combinations of variables in a term to `2^X`.
 pub struct Booleanomial<const N: usize>
 where
     BoolyOrder<N>: GoodBooly,
 {
-    /// The coefficients of the N terms
+    /// The coefficients of the `N` terms
     ///
-    /// The kth bit of each index in coeffs is 1 if the term it corresponds to contains the kth
-    /// variable. For example, if the term is 2abc, the index is 111b = 7, so coeffs\[7]=2. If the
-    /// term is 3ac, the index = 101b = 5, so coeffs\[5] = 3.
+    /// The kth bit of each index in `coeffs` is 1 if the term it corresponds to contains the kth
+    /// variable. For example, if the term is `2abc`, the index is `111b = 7`, so `coeffs\[7]=2`. If
+    /// the term is `3ac`, the index = `101b` = 5, so `coeffs\[5] = 3`.
     coeffs: Box<[i32; N]>,
 }
 
@@ -55,14 +62,14 @@ impl<const N: usize> Booleanomial<N>
 where
     BoolyOrder<N>: GoodBooly,
 {
-    /// Create a new `booleanomial` with a value of 0 (y = 0)
+    /// Create a new `booleanomial` with a value of 0 (`y = 0`)
     pub fn new_false() -> Self {
         Self {
             coeffs: Box::new([0; N]),
         }
     }
 
-    /// Create a new `booleanomial` which is 1 when the zth variable is 1 (y = z)
+    /// Create a new `booleanomial` which is 1 when the zth variable is 1 (`y = z`)
     pub fn new(z: usize) -> Self {
         let mut ret = Self::new_false();
         ret.coeffs[1 << z] = 1;
@@ -76,17 +83,17 @@ where
             for j in 0..N {
                 // Using the fact that the bits in the index correspond to which variables are in
                 // the term, we can use the bitwise or of the two indices that we are multiplying
-                // to find the destination index in `ret`. For example, for 3ab + 2bc = 6abc,
-                // 011 | 110 = 111.
+                // to find the destination index in `ret`. For example, for `3ab + 2bc = 6abc`,
+                // `011 | 110 = 111`.
                 ret.coeffs[i | j] += self.coeffs[i] * other.coeffs[j]
             }
         }
         ret
     }
 
-    /// Calculate the opposite of this booleanomial (1 -> 0, 0 -> 1).
+    /// Calculate the opposite of this booleanomial (1 -> 0, 0 -> 1)
     pub fn not(&self) -> Self {
-        // Implemented by doing X = 1 - X
+        // Implemented by doing NOT X = 1 - X
         let mut ret = Self::new_false();
         // negate the constant term and add 1
         ret.coeffs[0] = 1 - self.coeffs[0];
@@ -97,13 +104,13 @@ where
         ret
     }
 
-    // Calculate the booleanomial that is 1 if both input booleanomials are 1.
+    /// Calculate the booleanomial that is 1 if both input booleanomials are 1
     pub fn and(&self, other: &Self) -> Self {
-        // a AND b = ab. 0(0) = 0, 0(1) = 0, 1(0) = 0, 1(1) = 1
+        // a AND b = ab cuz 0(0) = 0, 0(1) = 0, 1(0) = 0, 1(1) = 1
         self.mul(other)
     }
 
-    // Calculate the booleanomial that is 0 if both input booleanomials are 0.
+    /// Calculate the booleanomial that is 0 if both input booleanomials are 0
     pub fn or(&self, other: &Self) -> Self {
         // a OR b = -ab + a + b
         let mut ret = self.mul(other);
@@ -113,7 +120,7 @@ where
         ret
     }
 
-    // Calculate the booleanomial that is 1 if exactly one input booleanomials is 1.
+    /// Calculate the booleanomial that is 1 if exactly one input booleanomials is 1
     pub fn xor(&self, other: &Self) -> Self {
         // a XOR b = -2ab + a + b
         let mut ret = self.mul(other);
