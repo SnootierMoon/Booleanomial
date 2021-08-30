@@ -31,7 +31,8 @@ mod inner {
     );
 }
 
-/// A Booleanomial.
+/// A Booleanomial of `N` terms.
+///
 /// Has `N` terms, and `log2(N)` variables. For example, a `Booleanomial<4>` has four terms and two
 /// variables, so it can represent a XOR b, or -2ab + a + b.
 ///
@@ -96,13 +97,13 @@ where
         ret
     }
 
-    // Calculate the booleanomial that is true if both input booleanomials are true.
+    // Calculate the booleanomial that is 1 if both input booleanomials are 1.
     pub fn and(&self, other: &Self) -> Self {
         // a AND b = ab. 0(0) = 0, 0(1) = 0, 1(0) = 0, 1(1) = 1
         self.mul(other)
     }
 
-    // Calculate the booleanomial that is false if both input booleanomials are false.
+    // Calculate the booleanomial that is 0 if both input booleanomials are 0.
     pub fn or(&self, other: &Self) -> Self {
         // a OR b = -ab + a + b
         let mut ret = self.mul(other);
@@ -112,7 +113,7 @@ where
         ret
     }
 
-    // Calculate the booleanomial that is true if exactly one input booleanomials is true.
+    // Calculate the booleanomial that is 1 if exactly one input booleanomials is 1.
     pub fn xor(&self, other: &Self) -> Self {
         // a XOR b = -2ab + a + b
         let mut ret = self.mul(other);
