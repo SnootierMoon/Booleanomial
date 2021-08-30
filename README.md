@@ -16,7 +16,11 @@ Turn boolean operations into polynomials
     If a and b are both 1, then y = 1.
   * The booleanomial of `a OR b` is `y = -ab + a + b`. 
     If either a = 1 or b = 1, then y = 1, and otherwise y = 0.
-  
+    
+## I wanna see stuff
+
+`cargo run --example demo`
+
 ## Todo
 
 Display order: display terms in degree and alphabetical order.
