@@ -30,14 +30,14 @@ mod inner {
     );
 }
 
-pub struct Boolynomial<const N: usize>
+pub struct Booleanomial<const N: usize>
 where
     BoolyOrder<N>: Pow2,
 {
     coeffs: Box<[i32; N]>,
 }
 
-impl<const N: usize> Boolynomial<N>
+impl<const N: usize> Booleanomial<N>
 where
     BoolyOrder<N>: Pow2,
 {
@@ -93,7 +93,7 @@ where
     }
 }
 
-impl<const N: usize> std::fmt::Display for Boolynomial<N>
+impl<const N: usize> std::fmt::Display for Booleanomial<N>
 where
     BoolyOrder<N>: Pow2,
 {
@@ -137,39 +137,23 @@ where
     }
 }
 
-//fn main() {
-//    let a = Boolynomial::<8>::new(0);
-//    let b = Boolynomial::<8>::new(1);
-//    let c = Boolynomial::<8>::new(2);
-//    println!("~a\n    = ({})", a.not());
-//    println!("a & b\n    = ({})", a.and(&b));
-//    println!("b | a\n    = ({})", a.or(&b));
-//    println!("a ^ b\n    = ({})", a.xor(&b));
-//    println!("a & (b | c)\n    = ({})", b.or(&c).and(&a));
-//    println!("S = a ^ (b ^ c)\n    = ({})", a.xor(&b).xor(&c));
-//    println!(
-//        "cout = (a & b) | (c & (a ^ b))\n    = ({})",
-//        a.and(&b).or(&c.and(&a.xor(&b)))
-//    )
-//}
-
 #[cfg(test)]
 mod tests {
-    use crate::Boolynomial;
+    use crate::Booleanomial;
 
     #[test]
     fn order_test() {
-        let a = Boolynomial::<2>::new(0);
+        let a = Booleanomial::<2>::new(0);
         assert_eq!(a.to_string(), "a");
 
-        let a = Boolynomial::<4>::new(0);
-        let b = Boolynomial::<4>::new(1);
+        let a = Booleanomial::<4>::new(0);
+        let b = Booleanomial::<4>::new(1);
         assert_eq!(a.to_string(), "a");
         assert_eq!(b.to_string(), "b");
 
-        let a = Boolynomial::<8>::new(0);
-        let b = Boolynomial::<8>::new(1);
-        let c = Boolynomial::<8>::new(2);
+        let a = Booleanomial::<8>::new(0);
+        let b = Booleanomial::<8>::new(1);
+        let c = Booleanomial::<8>::new(2);
         assert_eq!(a.to_string(), "a");
         assert_eq!(b.to_string(), "b");
         assert_eq!(c.to_string(), "c")
@@ -177,8 +161,8 @@ mod tests {
 
     #[test]
     fn basic_op_test() {
-        let a = Boolynomial::<4>::new(0);
-        let b = Boolynomial::<4>::new(1);
+        let a = Booleanomial::<4>::new(0);
+        let b = Booleanomial::<4>::new(1);
         assert_eq!(a.not().to_string(), "1 - a");
         assert_eq!(a.and(&b).to_string(), "ab");
         assert_eq!(a.or(&b).to_string(), "a + b - ab");
@@ -187,9 +171,9 @@ mod tests {
 
     #[test]
     fn complex_op_test() {
-        let a = Boolynomial::<8>::new(0);
-        let b = Boolynomial::<8>::new(1);
-        let c = Boolynomial::<8>::new(2);
+        let a = Booleanomial::<8>::new(0);
+        let b = Booleanomial::<8>::new(1);
+        let c = Booleanomial::<8>::new(2);
         assert_eq!(
             a.xor(&b).xor(&c).to_string(),
             "a + b - 2ab + c - 2ac - 2bc + 4abc"
