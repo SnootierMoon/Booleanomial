@@ -23,4 +23,4 @@ Turn boolean operations into polynomials
 
 ## Todo
 
-Display order: display terms in degree and alphabetical order.
+Display order: display terms in degree/alphabetical order.
